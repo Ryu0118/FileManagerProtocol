@@ -2,7 +2,6 @@ import Foundation
 
 /// A protocol that abstracts FileManager operations for testability and flexibility.
 public protocol FileManagerProtocol: Sendable {
-
     /// The path to the current directory.
     var currentDirectoryPath: String { get }
 
@@ -124,48 +123,47 @@ public protocol FileManagerProtocol: Sendable {
 }
 
 #if os(macOS)
-/// macOS-specific extensions for FileManagerProtocol.
-public protocol FileManagerProtocolMacOS: FileManagerProtocol {
-    /// The home directory for the current user.
-    var homeDirectoryForCurrentUser: URL { get }
+    /// macOS-specific extensions for FileManagerProtocol.
+    public protocol FileManagerProtocolMacOS: FileManagerProtocol {
+        /// The home directory for the current user.
+        var homeDirectoryForCurrentUser: URL { get }
 
-    /// Returns the home directory for the specified user.
-    func homeDirectory(forUser userName: String) -> URL?
-}
+        /// Returns the home directory for the specified user.
+        func homeDirectory(forUser userName: String) -> URL?
+    }
 
-extension FileManager: FileManagerProtocolMacOS {}
+    extension FileManager: FileManagerProtocolMacOS {}
 #else
-extension FileManager: FileManagerProtocol {}
+    extension FileManager: FileManagerProtocol {}
 #endif
 
-extension FileManagerProtocol {
-
-    public func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool) throws {
+public extension FileManagerProtocol {
+    func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool) throws {
         try createDirectory(at: url, withIntermediateDirectories: createIntermediates, attributes: nil)
     }
 
-    public func createDirectory(atPath path: String, withIntermediateDirectories createIntermediates: Bool) throws {
+    func createDirectory(atPath path: String, withIntermediateDirectories createIntermediates: Bool) throws {
         try createDirectory(atPath: path, withIntermediateDirectories: createIntermediates, attributes: nil)
     }
 
     @discardableResult
-    public func createFile(atPath path: String, contents data: Data?) -> Bool {
+    func createFile(atPath path: String, contents data: Data?) -> Bool {
         createFile(atPath: path, contents: data, attributes: nil)
     }
 
-    public func enumerator(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?) -> FileManager.DirectoryEnumerator? {
+    func enumerator(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?) -> FileManager.DirectoryEnumerator? {
         enumerator(at: url, includingPropertiesForKeys: keys, options: [], errorHandler: nil)
     }
 
     /// Executes an action within a temporary directory, then cleans up.
-    public func runInTemporaryDirectory<T>(
+    func runInTemporaryDirectory<T>(
         _ action: @Sendable (_ temporaryDirectory: URL) async throws -> T
     ) async throws -> T {
         try await runInTemporaryDirectory(prefix: UUID().uuidString, action)
     }
 
     /// Executes an action within a temporary directory with a custom prefix, then cleans up.
-    public func runInTemporaryDirectory<T>(
+    func runInTemporaryDirectory<T>(
         prefix: String,
         _ action: @Sendable (_ temporaryDirectory: URL) async throws -> T
     ) async throws -> T {
@@ -181,12 +179,12 @@ extension FileManagerProtocol {
     }
 
     /// Creates a unique temporary directory with the specified prefix.
-    public func makeTemporaryDirectory(prefix: String) throws -> URL {
+    func makeTemporaryDirectory(prefix: String) throws -> URL {
         var systemTemporaryDirectory = temporaryDirectory.path(percentEncoded: false)
         #if os(macOS)
-        if systemTemporaryDirectory.hasPrefix("/var/") {
-            systemTemporaryDirectory = "/private\(systemTemporaryDirectory)"
-        }
+            if systemTemporaryDirectory.hasPrefix("/var/") {
+                systemTemporaryDirectory = "/private\(systemTemporaryDirectory)"
+            }
         #endif
         let directory = URL(fileURLWithPath: systemTemporaryDirectory)
             .appendingPathComponent("\(prefix)-\(UUID().uuidString)")
@@ -195,7 +193,7 @@ extension FileManagerProtocol {
     }
 
     /// Creates a unique temporary directory.
-    public func makeTemporaryDirectory() throws -> URL {
+    func makeTemporaryDirectory() throws -> URL {
         try makeTemporaryDirectory(prefix: UUID().uuidString)
     }
 }

@@ -1,10 +1,9 @@
+@testable import FileManagerProtocol
 import Foundation
 import Testing
-@testable import FileManagerProtocol
 
 @Suite("FileManagerProtocol Tests")
 struct FileManagerProtocolTests {
-
     let fileManager: FileManagerProtocol = FileManager.default
     let testDirectory: URL
 
@@ -31,12 +30,12 @@ struct FileManagerProtocolTests {
     }
 
     #if os(macOS)
-    @Test func homeDirectoryForCurrentUser() {
-        let fm = FileManager.default as FileManagerProtocolMacOS
-        let homeDir = fm.homeDirectoryForCurrentUser
-        #expect(homeDir.isFileURL)
-        #expect(fm.fileExists(atPath: homeDir.path(percentEncoded: false)))
-    }
+        @Test func homeDirectoryForCurrentUser() {
+            let fm = FileManager.default as FileManagerProtocolMacOS
+            let homeDir = fm.homeDirectoryForCurrentUser
+            #expect(homeDir.isFileURL)
+            #expect(fm.fileExists(atPath: homeDir.path(percentEncoded: false)))
+        }
     #endif
 
     @Test func createDirectoryAtURL() throws {
@@ -169,12 +168,12 @@ struct FileManagerProtocolTests {
     }
 
     #if os(macOS)
-    @Test func homeDirectoryForUser() {
-        let fm = FileManager.default as FileManagerProtocolMacOS
-        let homeDir = fm.homeDirectory(forUser: NSUserName())
-        #expect(homeDir != nil)
-        #expect(homeDir?.isFileURL == true)
-    }
+        @Test func homeDirectoryForUser() {
+            let fm = FileManager.default as FileManagerProtocolMacOS
+            let homeDir = fm.homeDirectory(forUser: NSUserName())
+            #expect(homeDir != nil)
+            #expect(homeDir?.isFileURL == true)
+        }
     #endif
 
     @Test func changeCurrentDirectoryPath() throws {
