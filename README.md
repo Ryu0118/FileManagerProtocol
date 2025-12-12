@@ -15,7 +15,7 @@ Add the following to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/user/FileManagerProtocol.git", from: "0.1.0")
+    .package(url: "https://github.com/Ryu0118/FileManagerProtocol.git", from: "0.1.0")
 ]
 ```
 
